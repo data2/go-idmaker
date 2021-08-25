@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"sync"
 	"testing"
 )
@@ -45,6 +46,13 @@ func TestStruct(t *testing.T) {
 		sync.RWMutex{},
 	}
 	seqid2 := &seqid
-
 	println(&seqid == &(*seqid2)) // true
+}
+
+func TestWriteFile(t *testing.T) {
+	ioutil.WriteFile("~/idMaker.txt", []byte("2"), 0664)
+}
+
+func TestPath(t *testing.T) {
+	print(PathJoin())
 }
