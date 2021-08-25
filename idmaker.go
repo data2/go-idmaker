@@ -1,12 +1,18 @@
 package main
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"os/user"
+	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -93,10 +99,10 @@ func PathExist(_path string) bool {
 }
 
 func Load() {
-	if !PathExist("~/.idMarker") {
+	if !PathExist(PathJoin()) {
 		return
 	}
-	bytes, err := ioutil.ReadFile("~/.idMarker")
+	bytes, err := ioutil.ReadFile(PathJoin())
 	if err != nil {
 		panic(err)
 	}
@@ -109,12 +115,76 @@ func Load() {
 	}
 }
 
+func homeUnix() (string, error) {
+	// First prefer the HOME environmental variable
+	if home := os.Getenv("HOME"); home != "" {
+		return home, nil
+	}
+
+	// If that fails, try the shell
+	var stdout bytes.Buffer
+	cmd := exec.Command("sh", "-c", "eval echo ~$USER")
+	cmd.Stdout = &stdout
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+
+	result := strings.TrimSpace(stdout.String())
+	if result == "" {
+		return "", errors.New("blank output when reading home directory")
+	}
+
+	return result, nil
+}
+
+var idMakerFile = "idMaker.txt"
+
+func homeWindows() (string, error) {
+	drive := os.Getenv("HOMEDRIVE")
+	path := os.Getenv("HOMEPATH")
+	home := drive + path
+	if drive == "" || path == "" {
+		home = os.Getenv("USERPROFILE")
+	}
+	if home == "" {
+		return "", errors.New("HOMEDRIVE, HOMEPATH, and USERPROFILE are blank")
+	}
+
+	return home, nil
+}
+
+func GetHomePath() (string, string) {
+	user, err := user.Current()
+	if nil == err {
+		return user.HomeDir, "linux"
+	}
+
+	// cross compile support
+	if "windows" == runtime.GOOS {
+		pathWindows, _ := homeWindows()
+		return pathWindows, "windows"
+	}
+
+	// Unix-like system, so just assume Unix
+	pathUnix, _ := homeUnix()
+	return pathUnix, "unix"
+}
+
+func PathJoin() string {
+	dir, osType := GetHomePath()
+	switch osType {
+	case "windows":
+		return dir + "\\" + idMakerFile
+	default:
+		return dir + "/" + idMakerFile
+	}
+}
 func (im *IdMaker) Record() {
 	id := im.SeqId.id
 	fmt.Println("------------------------------------------------------------------------------------")
 	fmt.Println(fmt.Sprintf("program execution done, record id : %d, time : %s", id, time.Now().String()))
 	fmt.Println("------------------------------------------------------------------------------------")
-	ioutil.WriteFile("~/.idMarker", []byte(strconv.Itoa(int(id))), 0664)
+	ioutil.WriteFile(PathJoin(), []byte(strconv.Itoa(int(id))), 0664)
 }
 
 func BeautyExit(ch chan os.Signal) {
