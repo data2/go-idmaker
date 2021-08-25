@@ -52,9 +52,9 @@ func (im *IdMaker) GetSeqId() *SeqId {
 }
 
 func (im *IdMaker) GetNewSeqId(c Client) *SeqId {
-	//PrettyClient(c)
+	PrettyClient(c)
 	im.SeqId.mu.Lock()
-	//PrettyLockClient(c)
+	PrettyLockClient(c)
 	im.SeqId.id += 1
 	seq := im.SeqId
 	im.SeqId.mu.Unlock()
