@@ -191,7 +191,6 @@ func (im *IdMaker) Record() {
 func BeautyExit(ch chan os.Signal) {
 	fmt.Println("------------------------------------------------------------------------------------")
 	fmt.Println("program execution begin , listening health...")
-	fmt.Println("------------------------------------------------------------------------------------")
 	for s := range ch {
 		fmt.Println("------------------------------------------------------------------------------------")
 		fmt.Println(fmt.Sprintf("program execution exit, receive signal：%s", s))
@@ -201,16 +200,20 @@ func BeautyExit(ch chan os.Signal) {
 }
 
 func main() {
+	fmt.Println(fmt.Sprintf("receive out param: port: %s, path: %s", os.Args[1],os.Args[2]))
 	Load()
-	http.HandleFunc("/idMaker", index)
+	http.HandleFunc(os.Args[2], index)
 
 	ch := make(chan os.Signal)
 	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2)
 	go BeautyExit(ch)
 
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		fmt.Println("启动失败")
+	err1 := http.ListenAndServe(":" + os.Args[1], nil)
+	if err1 != nil {
+		fmt.Println(err1)
+	}else {
+		fmt.Println(fmt.Sprintf("program execution started, please curl url: http://localhost:%s%s",os.Args[1],os.Args[2]))
 	}
+	fmt.Println("------------------------------------------------------------------------------------")
 
 }
