@@ -68,6 +68,7 @@ func (im *IdMaker) GetNewSeqId(c Client) *SeqId {
 	PrettyLockClient(c)
 	im.SeqId.id += 1
 	seq := im.SeqId
+	im.Record()
 	im.SeqId.mu.Unlock()
 	c.ReturnTime = time.Now().String()
 	PrettyClientReturn(c, seq.id)
