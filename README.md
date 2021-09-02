@@ -7,6 +7,11 @@
 
 多个app访问基服务，获取到基id，默认获取[id*1000,(id+1)*1000)序列，使用完毕后再请求获取新基id，类似于java中的分段锁，整体架构并发安全，性能最高
 
+# architecture
+
+![go-idmaker](https://user-images.githubusercontent.com/13504729/131777195-37a3d5d8-b49e-48ab-a2d4-f0cae84968be.png)
+
+
 # 启动项目
 
 ```go
