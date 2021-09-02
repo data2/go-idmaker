@@ -9,7 +9,7 @@
 
 # architecture
 
-![go-idmaker (1)](https://user-images.githubusercontent.com/13504729/131777453-c41baf4f-9fcc-4d25-bc5c-806f9b862d32.png)
+![go-idmaker (2)](https://user-images.githubusercontent.com/13504729/131777983-6b274c5e-765e-4e0a-90a9-638e0bb13988.png)
 
 # 启动项目
 
