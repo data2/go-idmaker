@@ -1,7 +1,6 @@
 # 安全可靠的高性能分布式序列自增基服务
 
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Build Status](https://travis-ci.org/data2/go-idmaker.svg?branch=master)](https://travis-ci.org/data2/go-idmaker)
  
 安全可靠的高性能分布式序列自增基服务go-idmaker
 
