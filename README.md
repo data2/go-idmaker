@@ -22,5 +22,6 @@ go run idmaker.go 8080, /idMaker
 
 # testing
 
+```
 go test -v -run TestPrettyClientReturn  idmaker_test.go idmaker.go 
-
+```
